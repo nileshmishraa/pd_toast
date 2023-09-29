@@ -9,6 +9,6 @@ stringData:
   client-authentication-method: client_secret_basic
   authorization-grant-types: client_credentials
   scope: bid
-  client-id: insert-client-id
-  client-secret: insert-client-secret
-  issuer-uri: insert-issuer-uri
+  client-id: sta_pb-toast
+  client-secret: f4fc9a42-ff0f-4945-a3a6-4a9668bac09e
+  issuer-uri: https://login.sso.az.run.withtanzu.com
