@@ -1,0 +1,14 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          sso:
+            client-id: sta_pb-toast
+            client-secret: f4fc9a42-ff0f-4945-a3a6-4a9668bac09e
+            authorization-grant-type: client_credentials
+            scope:
+              - bid
+        provider:
+          sso:
+            issuer-uri: https://login.sso.az.run.withtanzu.com
