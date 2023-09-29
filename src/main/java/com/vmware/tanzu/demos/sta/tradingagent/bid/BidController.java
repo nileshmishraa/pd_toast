@@ -36,6 +36,7 @@ class BidController {
     }
 
     void execute(PrintWriter out) {
+
         out.println("Using bid agent: " + bidAgent);
         out.println("Current user: " + user);
 
