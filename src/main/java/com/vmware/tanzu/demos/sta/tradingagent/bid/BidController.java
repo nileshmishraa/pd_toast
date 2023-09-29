@@ -28,6 +28,7 @@ class BidController {
     private final String user;
     private final BidAgent bidAgent;
     private final RestTemplate client;
+    private Map<String, BigDecimal> stockMap;
 
     BidController(@Value("${app.agent.user}") String user, BidAgent bidAgent, RestTemplate client) {
         this.user = user;
@@ -60,7 +61,29 @@ class BidController {
             return;
         }
 
-        // Sort stocks against symbol.
+        Arrays.stream(stocks).forEach(s -> {
+            var stockPrices = client.getForObject(String.format("/api/v1/stocks/%s/values", s.symbol()), StockHistoricValue[].class);
+            BigDecimal sum = new BigDecimal(0);
+            for (int i = 0; i < stockPrices.length; i++) {
+                sum.add(stockPrices[i].price);
+            }
+            BigDecimal average = sum.divide(new BigDecimal(stockPrices.length));
+            stockMap.put(s.symbol(), average);
+
+            if (average.doubleValue() > s.price().doubleValue() && !userInfo.stocks.isEmpty()) {
+                // sell
+            } else if (average.doubleValue() < s.price().doubleValue()) {
+                var requests = List.of(new BidAgentRequest(s.symbol(), 100));
+                for (final BidAgentRequest agentReq : requests) {
+                    logger.info("Placing bid: {}", agentReq);
+                    final UserBidRequest userReq = new UserBidRequest(user, agentReq.symbol(), agentReq.shares());
+                    client.postForLocation("/api/v1/bids", userReq);
+                    out.println("Placing bid: " + agentReq);
+                }
+            }
+        });
+
+        /*// Sort stocks against symbol.
         Arrays.sort(stocks, Comparator.comparing(Stock::symbol));
 
         final var shares = new HashMap<String, Integer>(userInfo.stocks().size());
@@ -118,7 +141,7 @@ class BidController {
                 }
             }
             out.println("Total bids: " + nf.format(totalBids));
-        }
+        }*/
     }
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)

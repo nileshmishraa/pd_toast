@@ -3,7 +3,7 @@ app:
     url: https://sta.az.run.withtanzu.com
   agent:
     strategy: buy-lower-stock
-    user: pb_toast
+    user: pb-toast
 
 spring:
   application:
